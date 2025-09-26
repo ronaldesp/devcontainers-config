@@ -24,6 +24,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Compute date tag
+        id: date
+        shell: bash
+        run: echo "date=$(date -u +%Y.%m.%d)" >> "$GITHUB_OUTPUT"
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -54,5 +59,17 @@ jobs:
           file: ${{ env.CONTEXT }}/Dockerfile
           push: true
           platforms: linux/amd64
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            ${{ steps.meta.outputs.tags }}
+            ${{ env.IMAGE_NAME }}:v${{ steps.date.outputs.date }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Ensure GHCR package is public
+        if: ${{ github.event_name != 'pull_request' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api -X PATCH \
+            -H "Accept: application/vnd.github+json" \
+            /user/packages/container/devcontainer-polyglot/visibility \
+            -f visibility=public || true

@@ -1,5 +1,9 @@
 # devcontainers-config
 
+[![Build and Publish Polyglot Devcontainer](https://github.com/ronaldesp/devcontainers-config/actions/workflows/build-polyglot-devcontainer.yml/badge.svg?branch=main)](https://github.com/ronaldesp/devcontainers-config/actions/workflows/build-polyglot-devcontainer.yml)
+
+Imagen en GHCR: `ghcr.io/ronaldesp/devcontainer-polyglot:latest` · Paquete: https://github.com/ronaldesp/devcontainers-config/pkgs/container/devcontainer-polyglot
+
 Perfiles de Dev Containers reutilizables.
 
 ## Perfil: Polyglot Cloud POCs
