@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Ensure pyenv is available for shells that haven't loaded profile.d yet
+if [ -f /etc/profile.d/pyenv.sh ]; then
+  # shellcheck disable=SC1091
+  source /etc/profile.d/pyenv.sh
+fi
+
+VER=
+if command -v pyenv >/dev/null 2>&1; then
+  # Pick first installed 3.13.x
+  VER=$(pyenv versions --bare | awk '/^3\.13(\.|$)/ { print $1; exit }')
+fi
+
+if [ -z "${VER:-}" ]; then
+  echo "Python 3.13 no está instalado via pyenv en esta imagen."
+  echo "Usa 'python3.13' directamente si está disponible o revisa el Dockerfile."
+  exit 1
+fi
+
+VDIR="/usr/local/pyenv/versions/${VER}/bin"
+if [ ! -d "$VDIR" ]; then
+  echo "Directorio de Python 3.13 no encontrado: $VDIR"
+  exit 1
+fi
+
+NEW_PATH="$VDIR:$PATH"
+
+if [ $# -eq 0 ]; then
+  echo "Activando shell con Python $VER al frente del PATH. Ejecuta 'exit' para volver."
+  exec env PATH="$NEW_PATH" bash -l
+else
+  exec env PATH="$NEW_PATH" "$@"
+fi
