@@ -1,0 +1,25 @@
+name: Build and Publish Polyglot DevContainer
+
+on:
+  push:
+    paths:
+      - '.devcontainer/polyglot/**'
+      - '.github/workflows/build-polyglot-devcontainer.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and push image from devcontainer.json
+        uses: devcontainers/ci@v0.3
+        with:
+          subFolder: .devcontainer/polyglot
+          imageName: ghcr.io/ronaldesp/devcontainer-polyglot
+          cacheFrom: ghcr.io/ronaldesp/devcontainer-polyglot
+          push: always

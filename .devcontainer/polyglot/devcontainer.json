@@ -1,0 +1,58 @@
+{
+  "name": "Polyglot Cloud POCs",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12"
+    },
+    "ghcr.io/devcontainers/features/dotnet:1": {
+      "version": "8.0"
+    },
+    "ghcr.io/devcontainers/features/powershell:1": {},
+    "ghcr.io/devcontainers/features/terraform:1": {
+      "version": "1.9"
+    },
+    "ghcr.io/devcontainers/features/azure-cli:1": {},
+    "ghcr.io/devcontainers/features/aws-cli:1": {},
+    "ghcr.io/devcontainers/features/google-cloud-sdk:1": {},
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-dotnettools.csharp",
+        "ms-vscode.powershell",
+        "hashicorp.terraform",
+        "ms-azuretools.vscode-azurefunctions",
+        "ms-vscode.azure-account",
+        "ms-azuretools.vscode-azureterraform",
+        "AmazonWebServices.aws-toolkit-vscode",
+        "GoogleCloudTools.cloudcode",
+        "github.vscode-pull-request-github",
+        "github.vscode-github-actions",
+        "yzhang.markdown-all-in-one",
+        "redhat.vscode-yaml",
+        "ms-azuretools.vscode-docker",
+        "EditorConfig.EditorConfig"
+      ],
+      "settings": {
+        "files.eol": "\n",
+        "editor.wordWrap": "on"
+      }
+    }
+  },
+  "containerEnv": {
+    "AZURE_EXTENSION_USE_DYNAMIC_INSTALL": "yes_without_prompt"
+  },
+  "mounts": [
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+  ],
+  "postCreateCommand": "/bin/bash -lc '\nset -euo pipefail\npython3 --version || true\npip3 --version || true\npython3 -m pip install -U pip setuptools wheel || true\n\n# .NET / PowerShell / Terraform\n dotnet --info || true\n pwsh -v || true\n terraform -version || true\n\n# CLIs cloud\n az version || true\n aws --version || true\n gcloud --version || true\n\n# Azure Functions Core Tools (requiere Node)\n npm i -g azure-functions-core-tools@4 --unsafe-perm true || true\n func --version || true\n'",
+  "remoteUser": "vscode"
+}
