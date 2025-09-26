@@ -20,9 +20,10 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 # Install Python 3.12 (default)
 RUN add-apt-repository ppa:deadsnakes/ppa -y \
     && apt-get update \
-    && apt-get install -y python3.12 python3.12-venv python3.12-distutils \
+    && apt-get install -y python3.12 python3.12-venv \
     && ln -sf /usr/bin/python3.12 /usr/local/bin/python3 \
-    && ln -sf /usr/bin/python3.12 /usr/local/bin/python
+    && ln -sf /usr/bin/python3.12 /usr/local/bin/python \
+    && (python3.12 -m ensurepip --upgrade || true)
 
 # Install Python 3.13.7 in parallel via pyenv (fallback to latest 3.13 if exact patch unavailable)
 ENV PYENV_ROOT=/usr/local/pyenv
