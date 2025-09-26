@@ -5,11 +5,9 @@ SHELL ["bash", "-lc"]
 
 # Install prerequisites
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-       curl ca-certificates gnupg lsb-release apt-transport-https software-properties-common unzip wget \
-       build-essential make libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev \
-       llvm libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev \
-    && rm -rf /var/lib/apt/lists/*
+     && apt-get install -y --no-install-recommends \
+         curl ca-certificates gnupg lsb-release apt-transport-https software-properties-common unzip wget \
+     && rm -rf /var/lib/apt/lists/*
 
 # Install Node LTS (20.x) via NodeSource
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
@@ -25,20 +23,15 @@ RUN add-apt-repository ppa:deadsnakes/ppa -y \
     && ln -sf /usr/bin/python3.12 /usr/local/bin/python \
     && (python3.12 -m ensurepip --upgrade || true)
 
-# Install Python 3.13.7 in parallel via pyenv (fallback to latest 3.13 if exact patch unavailable)
-ENV PYENV_ROOT=/usr/local/pyenv
-ENV PATH=${PYENV_ROOT}/bin:${PATH}
-RUN git clone https://github.com/pyenv/pyenv.git ${PYENV_ROOT} \
-    && echo 'export PYENV_ROOT=/usr/local/pyenv' >> /etc/profile.d/pyenv.sh \
-    && echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> /etc/profile.d/pyenv.sh \
-    && echo 'eval "$(pyenv init -)"' >> /etc/profile.d/pyenv.sh \
-    && eval "$(pyenv init -)" \
-    && (pyenv install -s 3.13.7 || pyenv install -s 3.13.0 || pyenv install -s 3.13) \
-    && pyenv rehash \
-    && ln -sf ${PYENV_ROOT}/versions/3.13*/bin/python3 ${PYENV_ROOT}/versions/3.13*/bin/python3.13 \
-    && ln -sf ${PYENV_ROOT}/versions/3.13*/bin/pip3 ${PYENV_ROOT}/versions/3.13*/bin/pip3.13 \
-    && ln -sf ${PYENV_ROOT}/versions/3.13*/bin/python3.13 /usr/local/bin/python3.13 \
-    && ln -sf ${PYENV_ROOT}/versions/3.13*/bin/pip3.13 /usr/local/bin/pip3.13
+# Install Python 3.13 (parallel) via deadsnakes and create shims
+RUN apt-get update \
+    && apt-get install -y python3.13 python3.13-venv \
+    && (python3.13 -m ensurepip --upgrade || true) \
+    && mkdir -p /usr/local/python313-shims \
+    && ln -sf /usr/bin/python3.13 /usr/local/python313-shims/python \
+    && ln -sf /usr/bin/python3.13 /usr/local/python313-shims/python3 \
+    && ln -sf /usr/bin/pip3.13 /usr/local/python313-shims/pip \
+    && ln -sf /usr/bin/pip3.13 /usr/local/python313-shims/pip3
 
 # Install .NET 8 SDK
 RUN wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \

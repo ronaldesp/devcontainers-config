@@ -1,27 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Ensure pyenv is available for shells that haven't loaded profile.d yet
-if [ -f /etc/profile.d/pyenv.sh ]; then
-  # shellcheck disable=SC1091
-  source /etc/profile.d/pyenv.sh
-fi
-
-VER=
-if command -v pyenv >/dev/null 2>&1; then
-  # Pick first installed 3.13.x
-  VER=$(pyenv versions --bare | awk '/^3\.13(\.|$)/ { print $1; exit }')
-fi
-
-if [ -z "${VER:-}" ]; then
-  echo "Python 3.13 no está instalado via pyenv en esta imagen."
-  echo "Usa 'python3.13' directamente si está disponible o revisa el Dockerfile."
-  exit 1
-fi
-
-VDIR="/usr/local/pyenv/versions/${VER}/bin"
+# Prepend shims pointing to system-installed 3.13 binaries
+VDIR="/usr/local/python313-shims"
 if [ ! -d "$VDIR" ]; then
-  echo "Directorio de Python 3.13 no encontrado: $VDIR"
+  echo "No se encontraron shims para Python 3.13 en $VDIR"
+  echo "Verifica que la imagen tenga python3.13 instalado."
   exit 1
 fi
 
