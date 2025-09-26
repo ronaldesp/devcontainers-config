@@ -26,7 +26,7 @@ Workflow: `.github/workflows/build-polyglot-devcontainer.yml`.
 
 ### Cómo usarlo en un repo nuevo (opción recomendada)
 
-Crea un `.devcontainer/devcontainer.json` mínimo que reference la imagen:
+Crea un `.devcontainer/devcontainer.json` mínimo que referencie la imagen:
 
 ```json
 {

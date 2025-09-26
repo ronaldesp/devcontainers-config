@@ -41,6 +41,11 @@ RUN wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-p
     && apt-get install -y dotnet-sdk-8.0 \
     && rm -rf /var/lib/apt/lists/*
 
+# Install Azure Functions Core Tools v4 (via Microsoft apt repo)
+RUN apt-get update \
+    && apt-get install -y azure-functions-core-tools-4 \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install PowerShell
 RUN apt-get update \
     && apt-get install -y powershell \
