@@ -33,7 +33,9 @@
         "redhat.vscode-yaml",
         "tamasfe.even-better-toml",
         "GitHub.copilot",
-        "GitHub.copilot-chat"
+        "GitHub.copilot-chat",
+        "ms-dotnettools.csdevkit"
+        ,"ms-vscode.vscode-azureextensionpack"
       ]
     }
   },
