@@ -52,6 +52,21 @@ jobs:
             type=ref,event=branch
             type=sha
 
+      - name: Build (load for smoke tests)
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ env.CONTEXT }}
+          file: ${{ env.CONTEXT }}/Dockerfile
+          push: false
+          load: true
+          platforms: linux/amd64
+          tags: ${{ env.IMAGE_NAME }}:ci-test-${{ github.sha }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Smoke test - Azure Functions Core Tools not preview
+        run: |
+          docker run --rm ${{ env.IMAGE_NAME }}:ci-test-${{ github.sha }} bash -lc "func --version | tee /tmp/funcver && ! grep -qi preview /tmp/funcver"
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
