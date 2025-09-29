@@ -41,17 +41,11 @@ RUN wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-p
     && apt-get install -y dotnet-sdk-8.0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Azure Functions Core Tools 4.x (prefer apt; if preview detected, fallback to stable via npm)
-RUN apt-get update \
-    && apt-get install -y azure-functions-core-tools-4 \
-    && FUNC_VER=$(func --version 2>/dev/null || true) \
-    && echo "Azure Functions Core Tools (apt): ${FUNC_VER}" \
-    && if echo "$FUNC_VER" | grep -qi 'preview'; then \
-         echo 'Preview detected. Installing stable 4.x via npm...'; \
-         npm i -g azure-functions-core-tools@4 --unsafe-perm true; \
-         echo "Azure Functions Core Tools (npm): $(func --version 2>/dev/null || true)"; \
-       fi \
-    && rm -rf /var/lib/apt/lists/*
+# Install Azure Functions Core Tools stable 4.x via npm (pin to a known stable release)
+# Note: We intentionally avoid the apt package here to prevent preview versions.
+RUN npm i -g azure-functions-core-tools@4.0.5455 --unsafe-perm true \
+    && func --version \
+    && which func
 
 # Install PowerShell
 RUN apt-get update \
