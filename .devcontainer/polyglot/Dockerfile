@@ -6,7 +6,7 @@ SHELL ["bash", "-lc"]
 # Install prerequisites
 RUN apt-get update \
      && apt-get install -y --no-install-recommends \
-         curl ca-certificates gnupg lsb-release apt-transport-https software-properties-common unzip wget \
+    curl ca-certificates gnupg lsb-release apt-transport-https software-properties-common unzip wget procps \
      && rm -rf /var/lib/apt/lists/*
 
 # Install Node LTS (20.x) via NodeSource
@@ -14,6 +14,10 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get update \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Azurite (Azure Storage emulator)
+RUN npm i -g azurite \
+    && azurite --version || true
 
 # Install Python 3.12 (default)
 RUN add-apt-repository ppa:deadsnakes/ppa -y \

@@ -8,6 +8,11 @@
     "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
   ],
   "remoteUser": "vscode",
+  "forwardPorts": [10000, 10001, 10002],
+  "containerEnv": {
+    "AZURITE_ACCOUNTS": "devstoreaccount1:Eby8vdM02xNOcqFeqCnf2U==",
+    "AZURE_STORAGE_CONNECTION_STRING": "UseDevelopmentStorage=true"
+  },
   "customizations": {
     "vscode": {
       "settings": {
@@ -31,5 +36,6 @@
         "GitHub.copilot-chat"
       ]
     }
-  }
+  },
+  "postStartCommand": "bash -lc 'if pgrep -x azurite >/dev/null; then echo Azurite already running; else mkdir -p /workspaces/.azurite && nohup azurite --silent --location /workspaces/.azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 >/workspaces/.azurite/azurite.log 2>&1 & fi'"
 }
