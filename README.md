@@ -16,6 +16,7 @@ Incluye:
 - Azure CLI, AWS CLI, Google Cloud SDK
 - Node LTS y Azure Functions Core Tools (se instala al crear el contenedor)
 - Extensiones VS Code para los stacks anteriores
+  - Incluye GitHub Copilot y Copilot Chat (requiere iniciar sesión en GitHub dentro de VS Code)
 - Montaje del socket de Docker del host (`/var/run/docker.sock`)
 
 Este perfil se construye y publica como imagen en GHCR:
@@ -55,6 +56,12 @@ Autenticación dentro del contenedor:
 Python 3.13 rápido:
 - `use-py313` abre un shell con Python 3.13 delante en el PATH.
 - `use-py313 pip3.13 install -U <paquete>` ejecuta un comando puntual con 3.13.
+
+Nota PowerShell (Windows): para comandos con `$` dentro del contenedor (por ejemplo, PowerShell en contenedor), usa comillas simples para evitar la expansión en el host. Ejemplo:
+
+```powershell
+docker run --rm ghcr.io/ronaldesp/devcontainer-polyglot:latest pwsh -NoLogo -Command '$PSVersionTable.PSVersion'
+```
 
 ### Bootstrap por script
 
