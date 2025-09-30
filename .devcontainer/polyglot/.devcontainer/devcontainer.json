@@ -5,7 +5,9 @@
     "dockerfile": "../Dockerfile"
   },
   "mounts": [
-    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind",
+    "source=devcontainer-vscode-extensions,target=/home/vscode/.vscode-server/extensions,type=volume",
+    "source=devcontainer-vscode-extensions-insiders,target=/home/vscode/.vscode-server-insiders/extensions,type=volume"
   ],
   "remoteUser": "vscode",
   "forwardPorts": [10000, 10001, 10002],
@@ -17,7 +19,19 @@
     "vscode": {
       "settings": {
         "files.eol": "\n",
-        "editor.wordWrap": "on"
+        "editor.wordWrap": "on",
+        "remote.extensionKind": {
+          "ms-azuretools.vscode-docker": ["workspace"],
+          "ms-azuretools.vscode-azurefunctions": ["workspace"],
+          "ms-vscode.azurecli": ["workspace"],
+          "ms-python.python": ["workspace"],
+          "ms-python.vscode-pylance": ["workspace"],
+          "ms-dotnettools.csharp": ["workspace"],
+          "ms-dotnettools.csdevkit": ["workspace"],
+          "ms-vscode.vscode-azureextensionpack": ["workspace"]
+        },
+        "extensions.autoCheckUpdates": true,
+        "extensions.autoUpdate": true
       },
       "extensions": [
         "ms-python.python",
