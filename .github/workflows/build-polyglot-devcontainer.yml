@@ -59,11 +59,18 @@ jobs:
         id: tags
         shell: bash
         run: |
-          tags="${{ steps.meta.outputs.tags }}\n${{ env.IMAGE_NAME }}:v${{ steps.date.outputs.date }}\n${{ env.IMAGE_NAME }}:coretools-${{ matrix.coretools }}"
-          if [ "${{ matrix.coretools }}" = "4.2.2" ]; then
-            tags="$tags\n${{ env.IMAGE_NAME }}:latest"
-          fi
-          printf "tags<<EOF\n%s\nEOF\n" "$tags" >> "$GITHUB_OUTPUT"
+          {
+            echo "tags<<EOF"
+            # Metadatos ya generan varias etiquetas (ref, sha, etc.)
+            printf "%s\n" "${{ steps.meta.outputs.tags }}"
+            # Añadimos las etiquetas adicionales deseadas (una por línea)
+            printf "%s\n" "${{ env.IMAGE_NAME }}:v${{ steps.date.outputs.date }}"
+            printf "%s\n" "${{ env.IMAGE_NAME }}:coretools-${{ matrix.coretools }}"
+            if [ "${{ matrix.coretools }}" = "4.2.2" ]; then
+              printf "%s\n" "${{ env.IMAGE_NAME }}:latest"
+            fi
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Build (load for smoke tests)
         uses: docker/build-push-action@v6

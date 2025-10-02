@@ -14,7 +14,7 @@ Carpeta canónica:
 Incluye:
 - Python 3.12 (default) y Python 3.13.7 (en paralelo), .NET 8, PowerShell, Terraform 1.13.3
 - Azure CLI, AWS CLI, Google Cloud SDK
-- Node LTS y Azure Functions Core Tools (se instala al crear el contenedor)
+- Node LTS y Azure Functions Core Tools (preinstaladas en la imagen)
 - Extensiones VS Code para los stacks anteriores
   - Incluye GitHub Copilot y Copilot Chat (requiere iniciar sesión en GitHub dentro de VS Code)
 - Montaje del socket de Docker del host (`/var/run/docker.sock`)
@@ -24,6 +24,59 @@ Este perfil se construye y publica como imagen en GHCR:
 - `ghcr.io/ronaldesp/devcontainer-polyglot:latest`
 
 Workflow: `.github/workflows/build-polyglot-devcontainer.yml`.
+
+### Variantes de Azure Functions Core Tools (tags y ejemplos)
+
+Publicamos dos variantes según la versión de Core Tools:
+
+- Predeterminada (estable): 4.2.2
+  - Tags: `ghcr.io/ronaldesp/devcontainer-polyglot:latest` y `ghcr.io/ronaldesp/devcontainer-polyglot:coretools-4.2.2`
+- Variante anterior (estable): 4.0.5455
+  - Tag: `ghcr.io/ronaldesp/devcontainer-polyglot:coretools-4.0.5455`
+
+Usa el tag que necesites en tu `devcontainer.json`.
+
+Ejemplo usando la variante predeterminada (4.2.2):
+
+```json
+{
+  "name": "Polyglot Cloud POCs",
+  "image": "ghcr.io/ronaldesp/devcontainer-polyglot:latest",
+  "remoteUser": "vscode"
+}
+```
+
+Ejemplo fijando la variante 4.2.2 explícita:
+
+```json
+{
+  "name": "Polyglot Cloud POCs",
+  "image": "ghcr.io/ronaldesp/devcontainer-polyglot:coretools-4.2.2",
+  "remoteUser": "vscode"
+}
+```
+
+Ejemplo usando la variante anterior 4.0.5455:
+
+```json
+{
+  "name": "Polyglot Cloud POCs (Core Tools 4.0.5455)",
+  "image": "ghcr.io/ronaldesp/devcontainer-polyglot:coretools-4.0.5455",
+  "remoteUser": "vscode"
+}
+```
+
+Comprobación rápida de la versión dentro del contenedor:
+
+```bash
+func --version
+```
+
+Desde PowerShell en Windows (nota de comillas ya detallada más abajo):
+
+```powershell
+docker run --rm ghcr.io/ronaldesp/devcontainer-polyglot:coretools-4.0.5455 bash -lc 'func --version'
+```
 
 ### Cómo usarlo en un repo nuevo (opción recomendada)
 
