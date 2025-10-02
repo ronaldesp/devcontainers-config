@@ -51,7 +51,8 @@
         "GitHub.copilot",
         "GitHub.copilot-chat",
         "ms-dotnettools.csdevkit"
-        ,"ms-vscode.vscode-azureextensionpack"
+        ,"ms-vscode.vscode-azureextensionpack",
+        "humao.rest-client"
       ]
     }
   },
