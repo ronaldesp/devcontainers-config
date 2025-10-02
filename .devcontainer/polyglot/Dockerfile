@@ -46,11 +46,11 @@ RUN wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-p
     && rm -rf /var/lib/apt/lists/*
 
 # Install Azure Functions Core Tools stable 4.x via npm
-# Prefer 4.2.2 if available; fall back to known stable 4.0.5455
-RUN (npm i -g azure-functions-core-tools@4.2.2 --unsafe-perm true \
-            || npm i -g azure-functions-core-tools@4.0.5455 --unsafe-perm true) \
-        && func --version \
-        && which func
+# Parameterize version so CI can build multiple variants
+ARG CORE_TOOLS_VERSION="4.2.2"
+RUN npm i -g azure-functions-core-tools@${CORE_TOOLS_VERSION} --unsafe-perm true \
+    && func --version \
+    && which func
 
 # Install PowerShell
 RUN apt-get update \

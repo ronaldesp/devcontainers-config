@@ -20,6 +20,9 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        coretools: ["4.2.2", "4.0.5455"]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -48,9 +51,19 @@ jobs:
         with:
           images: ${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest
             type=ref,event=branch
             type=sha
+            type=raw,value=coretools-${{ matrix.coretools }}
+
+      - name: Compute tags for push
+        id: tags
+        shell: bash
+        run: |
+          tags="${{ steps.meta.outputs.tags }}\n${{ env.IMAGE_NAME }}:v${{ steps.date.outputs.date }}\n${{ env.IMAGE_NAME }}:coretools-${{ matrix.coretools }}"
+          if [ "${{ matrix.coretools }}" = "4.2.2" ]; then
+            tags="$tags\n${{ env.IMAGE_NAME }}:latest"
+          fi
+          printf "tags<<EOF\n%s\nEOF\n" "$tags" >> "$GITHUB_OUTPUT"
 
       - name: Build (load for smoke tests)
         uses: docker/build-push-action@v6
@@ -60,12 +73,14 @@ jobs:
           push: false
           load: true
           platforms: linux/amd64
-          tags: ${{ env.IMAGE_NAME }}:ci-test-${{ github.sha }}
+          build-args: |
+            CORE_TOOLS_VERSION=${{ matrix.coretools }}
+          tags: ${{ env.IMAGE_NAME }}:ci-test-${{ github.sha }}-ct${{ matrix.coretools }}
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Smoke test - Azure Functions Core Tools not preview
         run: |
-          docker run --rm ${{ env.IMAGE_NAME }}:ci-test-${{ github.sha }} bash -lc "func --version | tee /tmp/funcver && ! grep -qi preview /tmp/funcver"
+          docker run --rm ${{ env.IMAGE_NAME }}:ci-test-${{ github.sha }}-ct${{ matrix.coretools }} bash -lc "func --version | tee /tmp/funcver && grep -q '${{ matrix.coretools }}' /tmp/funcver && ! grep -qi preview /tmp/funcver"
 
       - name: Build and push
         uses: docker/build-push-action@v6
@@ -74,9 +89,10 @@ jobs:
           file: ${{ env.CONTEXT }}/Dockerfile
           push: true
           platforms: linux/amd64
+          build-args: |
+            CORE_TOOLS_VERSION=${{ matrix.coretools }}
           tags: |
-            ${{ steps.meta.outputs.tags }}
-            ${{ env.IMAGE_NAME }}:v${{ steps.date.outputs.date }}
+            ${{ steps.tags.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Ensure GHCR package is public
