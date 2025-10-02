@@ -13,7 +13,8 @@
   "forwardPorts": [10000, 10001, 10002],
   "containerEnv": {
     "AZURITE_ACCOUNTS": "devstoreaccount1:Eby8vdM02xNOcqFeqCnf2U==",
-    "AZURE_STORAGE_CONNECTION_STRING": "UseDevelopmentStorage=true"
+    "AZURE_STORAGE_CONNECTION_STRING": "UseDevelopmentStorage=true",
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true"
   },
   "customizations": {
     "vscode": {
@@ -54,5 +55,5 @@
       ]
     }
   },
-  "postStartCommand": "bash -lc 'if pgrep -x azurite >/dev/null; then echo Azurite already running; else mkdir -p /workspaces/.azurite && nohup azurite --silent --location /workspaces/.azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 >/workspaces/.azurite/azurite.log 2>&1 & fi'"
+  "postStartCommand": "bash -lc 'if pgrep -f \\bazurite\\b >/dev/null; then echo Azurite already running; else mkdir -p /workspaces/.azurite && nohup azurite --silent --location /workspaces/.azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 >/workspaces/.azurite/azurite.log 2>&1 & fi; for i in {1..30}; do if curl -sSf http://127.0.0.1:10000/devstoreaccount1 >/dev/null; then echo Azurite ready; break; else echo waiting for Azurite...; sleep 1; fi; done'"
 }
