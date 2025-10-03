@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+set -e
+
+# Script to setup .NET Azure Functions project with optimal debugging configuration
+# Usage: setup-dotnet-functions [project-name]
+
+PROJECT_NAME=${1:-"MyFunctionApp"}
+CURRENT_DIR=$(pwd)
+
+echo "🚀 Setting up .NET Azure Functions project: $PROJECT_NAME"
+
+# Check if we're in a devcontainer
+if [ ! -f "/.dockerenv" ] && [ ! -f "/proc/1/cgroup" ] || ! grep -q container /proc/1/cgroup 2>/dev/null; then
+    echo "⚠️  Warning: This script is optimized for the polyglot devcontainer environment"
+fi
+
+# Check if func CLI is available
+if ! command -v func &> /dev/null; then
+    echo "❌ Azure Functions Core Tools not found. Please run this inside the devcontainer."
+    exit 1
+fi
+
+# Create new Functions project if it doesn't exist
+if [ ! -f "host.json" ]; then
+    echo "📁 Creating new .NET isolated Functions project..."
+    func init "$PROJECT_NAME" --dotnet-isolated --force
+    cd "$PROJECT_NAME" || exit 1
+    CURRENT_DIR=$(pwd)
+else
+    echo "📁 Using existing Functions project in current directory"
+fi
+
+# Copy template files from devcontainer
+TEMPLATE_DIR="/workspaces/.devcontainer/polyglot/templates/dotnet-functions"
+if [ -d "$TEMPLATE_DIR" ]; then
+    echo "📋 Copying optimized configuration files..."
+    
+    # Copy local.settings.json if it doesn't exist or is different
+    if [ ! -f "local.settings.json" ] || ! cmp -s "$TEMPLATE_DIR/local.settings.json" "local.settings.json"; then
+        cp "$TEMPLATE_DIR/local.settings.json" .
+        echo "✅ Updated local.settings.json with Azurite connection"
+    fi
+    
+    # Ensure .vscode directory exists
+    mkdir -p .vscode
+    
+    # Copy VS Code settings
+    if [ ! -f ".vscode/settings.json" ] || ! cmp -s "$TEMPLATE_DIR/.vscode/settings.json" ".vscode/settings.json"; then
+        cp "$TEMPLATE_DIR/.vscode/settings.json" .vscode/
+        echo "✅ Updated .vscode/settings.json with C# debugging config"
+    fi
+    
+    # Copy launch configuration
+    if [ ! -f ".vscode/launch.json" ] || ! cmp -s "$TEMPLATE_DIR/.vscode/launch.json" ".vscode/launch.json"; then
+        cp "$TEMPLATE_DIR/.vscode/launch.json" .vscode/
+        echo "✅ Updated .vscode/launch.json with Functions debugging"
+    fi
+    
+    # Copy tasks configuration
+    if [ ! -f ".vscode/tasks.json" ] || ! cmp -s "$TEMPLATE_DIR/.vscode/tasks.json" ".vscode/tasks.json"; then
+        cp "$TEMPLATE_DIR/.vscode/tasks.json" .vscode/
+        echo "✅ Updated .vscode/tasks.json with build/publish tasks"
+    fi
+else
+    echo "⚠️  Template directory not found. Creating minimal config..."
+    
+    # Create minimal local.settings.json
+    cat > local.settings.json << 'EOF'
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated"
+  }
+}
+EOF
+    echo "✅ Created basic local.settings.json"
+fi
+
+# Verify Azurite is running
+echo "🔍 Checking Azurite availability..."
+if curl -sSf http://127.0.0.1:10000/devstoreaccount1 >/dev/null 2>&1; then
+    echo "✅ Azurite is running and accessible"
+else
+    echo "⚠️  Azurite not responding. It should auto-start in the devcontainer."
+    echo "    You can manually start it with: azurite --silent --location .azurite --blobHost 0.0.0.0"
+fi
+
+echo ""
+echo "🎉 .NET Azure Functions project setup complete!"
+echo ""
+echo "Next steps:"
+echo "  1. Press F5 to start debugging, or"
+echo "  2. Run 'func start' in the terminal"
+echo "  3. Create functions with: func new --template HttpTrigger --name MyFunction"
+echo ""
+echo "📁 Project location: $CURRENT_DIR"

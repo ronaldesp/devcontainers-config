@@ -139,7 +139,8 @@ Este perfil instala el pack "Azure Tools" y extensiones relacionadas (Azure CLI,
     - Account: `devstoreaccount1` · Key: `Eby8vdM02xNOcqFeqCnf2U==`
 
 4) Azure Functions (Core Tools 4.x estable)
-  - F1 → "Azure Functions: Create New Project..." (elige Python/.NET según tu POC).
+  - **Para .NET C# isolated**: ejecuta `setup-dotnet-functions [nombre-proyecto]` para crear un proyecto preconfigurado con depuración lista.
+  - **Para otros lenguajes**: F1 → "Azure Functions: Create New Project..." (elige Python/Node según tu POC).
   - Para ejecutar local: F5 o `func start` en terminal.
   - Recomendado en Python: usar 3.12 por compatibilidad de runtime; puedes cambiar a 3.13 con `use-py313` si tu POC lo permite.
 

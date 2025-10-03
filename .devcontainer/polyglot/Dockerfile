@@ -101,4 +101,11 @@ WORKDIR /workspaces
 USER root
 COPY scripts/use-py313 /usr/local/bin/use-py313
 RUN chmod +x /usr/local/bin/use-py313
+
+# Helper: setup .NET Azure Functions with optimal debugging
+COPY scripts/setup-dotnet-functions /usr/local/bin/setup-dotnet-functions
+RUN chmod +x /usr/local/bin/setup-dotnet-functions
+
+# Copy configuration templates
+COPY templates/ /workspaces/.devcontainer/polyglot/templates/
 USER ${USERNAME}
