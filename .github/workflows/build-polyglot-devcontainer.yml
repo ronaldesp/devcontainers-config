@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        coretools: ["4.2.2", "4.0.5455"]
+        coretools: ["4.3.0", "4.0.5455"]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -66,7 +66,7 @@ jobs:
             # Añadimos las etiquetas adicionales deseadas (una por línea)
             printf "%s\n" "${{ env.IMAGE_NAME }}:v${{ steps.date.outputs.date }}"
             printf "%s\n" "${{ env.IMAGE_NAME }}:coretools-${{ matrix.coretools }}"
-            if [ "${{ matrix.coretools }}" = "4.2.2" ]; then
+            if [ "${{ matrix.coretools }}" = "4.3.0" ]; then
               printf "%s\n" "${{ env.IMAGE_NAME }}:latest"
             fi
             echo "EOF"

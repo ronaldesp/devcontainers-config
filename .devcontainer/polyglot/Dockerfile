@@ -47,7 +47,7 @@ RUN wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-p
 
 # Install Azure Functions Core Tools stable 4.x via npm
 # Parameterize version so CI can build multiple variants
-ARG CORE_TOOLS_VERSION="4.2.2"
+ARG CORE_TOOLS_VERSION="4.3.0"
 RUN npm i -g azure-functions-core-tools@${CORE_TOOLS_VERSION} --unsafe-perm true \
     && func --version \
     && which func

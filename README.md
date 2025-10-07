@@ -29,14 +29,14 @@ Workflow: `.github/workflows/build-polyglot-devcontainer.yml`.
 
 Publicamos dos variantes según la versión de Core Tools:
 
-- Predeterminada (estable): 4.2.2
-  - Tags: `ghcr.io/ronaldesp/devcontainer-polyglot:latest` y `ghcr.io/ronaldesp/devcontainer-polyglot:coretools-4.2.2`
+- Predeterminada (estable): 4.3.0
+  - Tags: `ghcr.io/ronaldesp/devcontainer-polyglot:latest` y `ghcr.io/ronaldesp/devcontainer-polyglot:coretools-4.3.0`
 - Variante anterior (estable): 4.0.5455
   - Tag: `ghcr.io/ronaldesp/devcontainer-polyglot:coretools-4.0.5455`
 
 Usa el tag que necesites en tu `devcontainer.json`.
 
-Ejemplo usando la variante predeterminada (4.2.2):
+Ejemplo usando la variante predeterminada (4.3.0):
 
 ```json
 {
@@ -46,12 +46,12 @@ Ejemplo usando la variante predeterminada (4.2.2):
 }
 ```
 
-Ejemplo fijando la variante 4.2.2 explícita:
+Ejemplo fijando la variante 4.3.0 explícita:
 
 ```json
 {
   "name": "Polyglot Cloud POCs",
-  "image": "ghcr.io/ronaldesp/devcontainer-polyglot:coretools-4.2.2",
+  "image": "ghcr.io/ronaldesp/devcontainer-polyglot:coretools-4.3.0",
   "remoteUser": "vscode"
 }
 ```
